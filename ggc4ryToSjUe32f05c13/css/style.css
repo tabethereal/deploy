@@ -20,31 +20,33 @@
    * colors
    */
 
-  --eerie-black_a95: hsla(204, 9%, 11%, 0.95);
-  --eerie-black_a50: hsla(204, 9%, 11%, 0.5);
-  --eerie-black: hsl(204, 9%, 11%);
   --gainsboro: hsl(225, 7%, 89%);
-  --charcoal: hsl(203, 9%, 28%);
-  --silver-sand: hsl(208, 12%, 78%);
-  --light-sky-blue: hsl(200, 100%, 73%);
-  --prussian-blue: hsl(196, 100%, 14%);
   --black: hsl(0, 0%, 0%);
   --black_a50: hsla(0, 0%, 0%, 0.5);
   --black_a20: hsla(0, 0%, 0%, 0.2);
-  --light-sky-blue_a8: hsla(200, 100%, 73%, 0.08);
-  --light-sky-blue_a12: hsla(200, 100%, 73%, 0.12);
-  --silver-sand_a8: hsla(208, 12%, 78%, 0.08);
-  --silver-sand_a12: hsla(208, 12%, 78%, 0.12);
+  --eerie-black: hsl(204, 9%, 11%);
+  --eerie-black_a95: hsla(204, 9%, 11%, 0.95);
+  --eerie-black_a50: hsla(204, 9%, 11%, 0.5);
+  --prussian-blue: hsl(196, 100%, 14%);
+  --light-sky-blue: hsl(200, 100%, 66%);
+  --light-sky-blue_a8: hsla(200, 100%, 66%, 0.08);
+  --light-sky-blue_a12: hsla(200, 100%, 66%, 0.12);
+  --silver-sand: hsl(208, 12%, 78%);
+  --charcoal: hsl(203, 9%, 32%);
+  --charcoal_a75: hsla(203, 9%, 32%, 0.75);
   
-  --background: var(--eerie-black);
-  --background-opacity: var(--eerie-black_a95);
-  --on-background: var(--gainsboro);
-  --surface-variant: var(--charcoal);
-  --on-surface-variant: var(--silver-sand);
-  --on-surface-variant-hover: var(--light-sky-blue_a8);
-  --on-surface-variant-focus: var(--light-sky-blue_a12);
+  --general-text: var(--gainsboro);
+  --background: var(--black);
+  --top-bar-bottom: var(--eerie-black_a95);
+  --playlist-bottom: var(--eerie-black);
+  --playlist-surface: var(--eerie-black_a50);
   --primary: var(--light-sky-blue);
-  --on-primary: var(--prussian-blue);
+  --primary-hover: var(--light-sky-blue_a8);
+  --primary-focus: var(--light-sky-blue_a12);
+  --primary-surface: var(--prussian-blue);
+  --secondary: var(--silver-sand);
+  --secondary-bottom: var(--charcoal);
+  --secondary-bottom-light: var(--charcoal_a75);
 
   /**
    * gradient
@@ -56,7 +58,9 @@
    * typography
    */
 
-  --ff-inter: 'Inter', sans-serif;
+  --ff-main: "mainfont", sans-serif;
+  --ff-title: "titlefont", sans-serif;
+  --ff-headline: "headlinefont", sans-serif;
 
   --headline-sm: 2.4rem;
   --title-lg: 2.2rem;
@@ -92,8 +96,20 @@
 
 }
 
+@font-face {
+  font-family: 'mainfont';
+  src: url(../font/mainfont.ttf) format('truetype');
+}
 
+@font-face {
+  font-family: 'titlefont';
+  src: url(../font/titlefont.ttf) format('truetype');
+}
 
+@font-face {
+  font-family: 'headlinefont';
+  src: url(../font/headlinefont.otf) format('opentype');
+}
 
 
 /*-----------------------------------*\
@@ -135,14 +151,14 @@ input { width: 100%; }
 button { cursor: pointer; }
 
 html {
-  font-family: var(--ff-inter);
+  font-family: var(--ff-main);
   font-size: 10px;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--black);
-  color: var(--on-background);
+  background-color: var(--background);
+  color: var(--general-text);
   font-size: 1.6rem;
   line-height: 1.5;
   min-height: 100vh;
@@ -164,7 +180,7 @@ body.modalActive { overflow: hidden; }
   border-radius: var(--radius-pill);
 }
 
-body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); }
+body:hover::-webkit-scrollbar-thumb { background-color: var(--secondary-bottom); }
 
 
 
@@ -178,7 +194,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
   font-family: 'Material Symbols Rounded';
   font-style: normal;
   font-weight: 400;
-  src: url(./playerfont.woff2) format('woff2');
+  src: url(../font/playerfont.woff2) format('woff2');
 }
 
 .material-symbols-rounded {
@@ -208,12 +224,13 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
 }
 
 .title-lg {
+  font-family: var(--ff-title);
   font-size: var(--title-lg);
   font-weight: var(--fw-400);
 }
 
 .btn-icon {
-  color: var(--on-surface-variant);
+  color: var(--secondary);
   width: 40px;
   height: 40px;
   display: grid;
@@ -221,10 +238,10 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
   border-radius: var(--radius-circle);
 }
 
-.btn-icon:hover { background-color: var(--on-surface-variant-hover); }
+.btn-icon:hover { background-color: var(--primary-hover); }
 
 .btn-icon:is(:focus, :focus-visible) {
-  background-color: var(--on-surface-variant-focus);
+  background-color: var(--primary-focus);
 }
 
 .img-cover {
@@ -234,17 +251,18 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
 }
 
 .txt-cover {
-  width: 200px;
+  width: 160px;
   object-fit: cover;
   padding: 0 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
-  color: var(--on-background);
+  color: var(--general-text);
 }
 
 .headline-sm {
+  font-family: var(--ff-headline);
   font-size: var(--headline-sm);
   font-weight: var(--fw-400);
 }
@@ -274,7 +292,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
   position: fixed;
   top: 0;
   left: 0;
-  background-color: var(--background-opacity);
+  background-color: var(--top-bar-bottom);
   min-width: 250px;
   width: 100%;
   height: 64px;
@@ -319,7 +337,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
 
 .music-banner {
   aspect-ratio: 1 / 1;
-  background-color: var(--surface-variant);
+  background-color: var(--secondary-bottom);
   max-width: 400px;
   margin-inline: auto;
   align-self: center;
@@ -355,7 +373,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
 
 .range::-webkit-slider-runnable-track {
   appearance: none;
-  background-color: var(--surface-variant);
+  background-color: var(--secondary-bottom);
   height: 6px;
   width: 100%;
   border-radius: var(--radius-pill);
@@ -384,11 +402,11 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
 }
 
 .range::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 0 12px var(--on-surface-variant-hover);
+  box-shadow: 0 0 0 12px var(--primary-hover);
 }
 
 .range::-webkit-slider-thumb:is(:focus, :focus-visible) {
-  box-shadow: 0 0 0 12px var(--on-surface-variant-focus);
+  box-shadow: 0 0 0 12px var(--primary-focus);
 }
 
 .duration-label {
@@ -401,13 +419,13 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
 .player-control .toggle.active { color: var(--primary); }
 
 .player-control .play {
-  background-color: var(--surface-variant);
+  background-color: var(--secondary-bottom-light);
   color: var(--primary);
 }
 
 .player-control .play.active {
   background-color: var(--primary);
-  color: var(--on-primary);
+  color: var(--primary-surface);
 }
 
 .player-control .btn-icon.active .default-icon,
@@ -430,7 +448,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
   right: -180px;
   width: 180px;
   height: 100vh;
-  background-color: var(--background);
+  background-color: var(--playlist-bottom);
   padding-top: 28px;
   padding-bottom: 28px;
   padding-left: 10px;
@@ -444,7 +462,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
   z-index: 4;
 }
 
-.playlist:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); }
+.playlist:hover::-webkit-scrollbar-thumb { background-color: var(--secondary-bottom); }
 
 .playlist.active {
   transform: translateX(-180px);
@@ -459,14 +477,14 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
 .music-item {
   position: relative;
   border-radius: var(--radius-12);
-  background-color: var(--background);
+  background-color: var(--playlist-bottom);
   overflow: hidden;
 }
 
 .music-item .item-icon {
   position: absolute;
   inset: 0;
-  background-color: var(--eerie-black_a50);
+  background-color: var(--playlist-surface);
   display: grid;
   place-items: center;
   opacity: 0;
@@ -688,7 +706,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
   }
 
   .music-item .item-icon .material-symbols-rounded {
-    font-size: 2.2rem;
+    font-size: 2.0rem;
   }
 
 }
@@ -717,4 +735,5 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--surface-variant); 
 
   .music-list { gap: 16px; }
 
+  .txt-cover { width: 200px; }
 }
