@@ -34,9 +34,10 @@
   --silver-sand: hsl(208, 12%, 78%);
   --charcoal: hsl(203, 9%, 32%);
   --charcoal_a75: hsla(203, 9%, 32%, 0.75);
-  
+
   --general-text: var(--gainsboro);
   --background: var(--black);
+  --card: var(--gradient-2);
   --top-bar-bottom: var(--eerie-black_a95);
   --playlist-bottom: var(--eerie-black);
   --playlist-surface: var(--eerie-black_a50);
@@ -52,7 +53,8 @@
    * gradient
    */
 
-  --gradient: linear-gradient(180deg, hsla(204, 9%, 11%, 0.90) 60%, transparent 120%);
+  --gradient-1: radial-gradient(circle at center, hsl(0, 0%, 20%), hsl(0, 0%, 7%));
+  --gradient-2: linear-gradient(to bottom right, hsl(0, 0%, 20%), hsl(0, 0%, 18%));
 
   /**
    * typography
@@ -318,7 +320,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--secondary-bottom);
 
 .player {
   --padding: 24px;
-  background-image: var(--gradient);
+  background-image: var(--gradient-1);
   padding: var(--padding);
   padding-block-start: calc(64px + var(--padding));
   min-height: 100vh;
@@ -337,12 +339,49 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--secondary-bottom);
 
 .music-banner {
   aspect-ratio: 1 / 1;
-  background-color: var(--secondary-bottom);
-  max-width: 400px;
+  max-width: 260px;
   margin-inline: auto;
-  align-self: center;
   overflow: hidden;
-  border-radius: var(--radius-24);
+  border-radius: var(--radius-12);
+  padding: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow-1);
+}
+
+.collectionpick {
+  overflow-y: auto;
+  max-height: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.collectionpick:hover::-webkit-scrollbar-thumb { background-color: var(--secondary-bottom); }
+
+.collection-list {
+  display: grid;
+  gap: 12px;
+}
+
+.collection-item {
+  width: 100%;
+  display: grid;
+  border-radius: var(--radius-12);
+}
+
+.collection-item:is(:hover, :focus-visible, :active) {
+  outline: 2px solid var(--secondary);
+}
+
+.txt-collection {
+  object-fit: cover;
+  padding: 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  color: var(--general-text);
 }
 
 .label-wrapper {
@@ -635,7 +674,7 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--secondary-bottom);
 
   .music-banner {
     aspect-ratio: unset;
-    max-width: max-content;
+    max-width: 400px;
     width: 100%;
     height: 100%;
   }
@@ -736,4 +775,14 @@ body:hover::-webkit-scrollbar-thumb { background-color: var(--secondary-bottom);
   .music-list { gap: 16px; }
 
   .txt-cover { width: 200px; }
+
+
+  .collectionpick {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .collection-list { gap: 16px; }
 }

@@ -1,5 +1,3 @@
-//TODO: 歌词、歌单、真随机、歌名搜索、小窗音量
-
 /**
  * 全局变量
  */
@@ -17,6 +15,8 @@ let playRate = 1;
 
 let shuffleList = [];
 
+let currentCollection = 0;
+
 
 /**
  * 为元素批量添加监听事件
@@ -30,50 +30,62 @@ const addEventOnElements = function (elements, eventType, callback) {
 /**
  * 获取音乐信息
  */
-let musicData = [];
-for (mid in map){
+let musicData;
+const loadMusicData = function () {
+  musicData = [];
+  let mids = (currentCollection == 0) ? Object.keys(map) : playlistInfo[currentCollection]["mids"];
+  for (let mid of mids){
     meta = {
-        title: map[mid], 
-        collection: "播放列表", 
-        musicPath: "./" + mid + ".mp3"
+      title: map[mid], 
+      collection: playlistInfo[currentCollection]["name"], 
+      musicPath: "./" + mid + ".mp3"
     }
     musicData.push(meta);
+  }
 }
 
 /**
  * 填充播放列表
  */
 const playlist = document.querySelector("[data-music-list]");
-for (let i = 0, len = musicData.length; i < len; i++) {
-  playlist.innerHTML += `
-  <li>
-    <button class="music-item ${i === 0 ? "playing" : ""}" data-playlist-toggler data-playlist-item="${i}">
-      <p class="txt-cover">${musicData[i].title}</p>
-      <div class="item-icon">
-        <span class="material-symbols-rounded">equalizer</span>
-      </div>
-    </button>
-  </li>
-  `;
+let playlistItems;
+const fillPlayList = function () {
+  playlist.innerHTML = ``;
+  for (let i = 0, len = musicData.length; i < len; i++) {
+    playlist.innerHTML += `
+    <li>
+      <button class="music-item" data-playlist-toggler data-playlist-item="${i}">
+        <p class="txt-cover">${musicData[i].title}</p>
+        <div class="item-icon">
+          <span class="material-symbols-rounded">equalizer</span>
+        </div>
+      </button>
+    </li>
+    `;
+  }
+  playlistItems = document.querySelectorAll("[data-playlist-item]");
+  attachTogglePlaylist();
+  attachSwitchMusic();
 }
 
 /**
  * 窗体变窄时，点击按钮弹出播放列表
  */
 const playlistSideModal = document.querySelector("[data-playlist]");
-const playlistTogglers = document.querySelectorAll("[data-playlist-toggler]");
 const overlay = document.querySelector("[data-overlay]");
 const togglePlaylist = function () {
   playlistSideModal.classList.toggle("active");
   overlay.classList.toggle("active");
   document.body.classList.toggle("modalActive");
 }
-addEventOnElements(playlistTogglers, "click", togglePlaylist);
+const attachTogglePlaylist = function () {
+  let playlistTogglers = document.querySelectorAll("[data-playlist-toggler]");
+  addEventOnElements(playlistTogglers, "click", togglePlaylist);
+}
 
 /**
  * 为当前音乐添加播放高亮，取消上一首音乐的播放高亮
  */
-const playlistItems = document.querySelectorAll("[data-playlist-item]");
 const highlightMusic = function () {
   playlistItems[lastPlayedMusic].classList.remove("playing");
   playlistItems[currentMusic].classList.add("playing");
@@ -85,7 +97,7 @@ const highlightMusic = function () {
  */
 const playerTitle = document.querySelector("[data-title]");
 const playerCollection = document.querySelector("[data-collection]");
-const audioSource = new Audio(musicData[currentMusic].musicPath);
+const audioSource = new Audio();
 const loadMusic = function () {
   playerTitle.textContent = musicData[currentMusic].title;
   playerCollection.textContent = musicData[currentMusic].collection;
@@ -102,6 +114,7 @@ const switchMusic = function () {
   loadMusic();
   playMusic();
 }
+const attachSwitchMusic = () => 
 addEventOnElements(playlistItems, "click", function () {
   lastPlayedMusic = currentMusic;
   currentMusic = Number(this.dataset.playlistItem);
@@ -306,11 +319,50 @@ const muteVolume = function () {
 }
 playerVolumeBtn.addEventListener("click", muteVolume);
 
+/**
+ * 展示歌单列表
+ */
+const collectionList = document.querySelector("[data-collection-list]");
+const showCollection = function () {
+  collectionList.innerHTML = ``;
+  for (let i = 0, len = playlistInfo.length; i < len; i++) {
+    collectionList.innerHTML += `
+    <li>
+      <button class="collection-item" data-collection-item="${i}">
+        <p class="txt-collection">${playlistInfo[i]["name"]}</p>
+      </button>
+    </li>
+    `;
+  }
+  let collectionItems = document.querySelectorAll("[data-collection-item]");
+  addEventOnElements(collectionItems, "click", function () {
+    currentCollection = Number(this.dataset.collectionItem);
+    refreshCollection();
+  });
+}
+
+/**
+ * 按歌单更新歌曲
+ */
+const refreshCollection = function () {
+  playBtn.classList.remove("active");
+  clearInterval(playTimer);
+  audioSource.currentTime = 0;
+  updateRunningTime();
+  currentMusic = lastPlayedMusic = 0;
+  shuffleList = [];
+  loadMusicData();
+  fillPlayList();
+  loadMusic();
+  highlightMusic();
+}
+
 
 /**
  * 初始化
  */
-loadMusic();
+showCollection();
+refreshCollection();
 
 playerVolumeRange.value = 0.5;
 playerVolumeRange.dispatchEvent(new Event("input"));
