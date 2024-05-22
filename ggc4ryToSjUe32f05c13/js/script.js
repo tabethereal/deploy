@@ -51,18 +51,28 @@ const playlist = document.querySelector("[data-music-list]");
 let playlistItems;
 const fillPlayList = function () {
   playlist.innerHTML = ``;
+  const fragment = document.createDocumentFragment();
   for (let i = 0, len = musicData.length; i < len; i++) {
-    playlist.innerHTML += `
-    <li>
-      <button class="music-item" data-playlist-toggler data-playlist-item="${i}">
-        <p class="txt-cover">${musicData[i].title}</p>
-        <div class="item-icon">
-          <span class="material-symbols-rounded">equalizer</span>
-        </div>
-      </button>
-    </li>
-    `;
+    const li = document.createElement('li');
+    const button = document.createElement('button');
+    const p = document.createElement('p');
+    const div = document.createElement('div');
+    const span = document.createElement('span');
+    button.classList.add('music-item');
+    button.setAttribute('data-playlist-toggler', '');
+    button.setAttribute('data-playlist-item', i);
+    p.classList.add('txt-cover');
+    p.textContent = musicData[i].title;
+    div.classList.add('item-icon');
+    span.classList.add('material-symbols-rounded');
+    span.textContent = 'equalizer';
+    li.appendChild(button);
+    button.appendChild(p);
+    button.appendChild(div);
+    div.appendChild(span);
+    fragment.appendChild(li);
   }
+  playlist.appendChild(fragment);
   playlistItems = document.querySelectorAll("[data-playlist-item]");
   attachTogglePlaylist();
   attachSwitchMusic();
@@ -325,15 +335,20 @@ playerVolumeBtn.addEventListener("click", muteVolume);
 const collectionList = document.querySelector("[data-collection-list]");
 const showCollection = function () {
   collectionList.innerHTML = ``;
+  const fragment = document.createDocumentFragment();
   for (let i = 0, len = playlistInfo.length; i < len; i++) {
-    collectionList.innerHTML += `
-    <li>
-      <button class="collection-item" data-collection-item="${i}">
-        <p class="txt-collection">${playlistInfo[i]["name"]}</p>
-      </button>
-    </li>
-    `;
+    const li = document.createElement('li');
+    const button = document.createElement('button');
+    const p = document.createElement('p');
+    button.classList.add('collection-item');
+    button.setAttribute('data-collection-item', i);
+    p.classList.add('txt-collection');
+    p.textContent = playlistInfo[i]["name"];
+    li.appendChild(button);
+    button.appendChild(p);
+    fragment.appendChild(li);
   }
+  collectionList.appendChild(fragment);
   let collectionItems = document.querySelectorAll("[data-collection-item]");
   addEventOnElements(collectionItems, "click", function () {
     currentCollection = Number(this.dataset.collectionItem);
