@@ -174,6 +174,7 @@ playBtn.addEventListener("click", playMusic);
  */
 const playerRunningTime = document.querySelector("[data-running-time");
 const updateRunningTime = function () {
+  if (playerSeekRange.max == 0) { updateDuration(); }
   if (audioSource.ended) {
     playBtn.classList.remove("active");
     audioSource.currentTime = 0;
