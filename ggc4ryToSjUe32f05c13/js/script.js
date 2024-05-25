@@ -361,16 +361,10 @@ const showCollection = function () {
  * 按歌单更新歌曲
  */
 const refreshCollection = function () {
-  playBtn.classList.remove("active");
-  clearInterval(playTimer);
-  audioSource.currentTime = 0;
-  updateRunningTime();
   currentMusic = lastPlayedMusic = 0;
   shuffleList = [];
   loadMusicData();
   fillPlayList();
-  loadMusic();
-  highlightMusic();
 }
 
 
@@ -379,6 +373,8 @@ const refreshCollection = function () {
  */
 showCollection();
 refreshCollection();
+loadMusic();
+highlightMusic();
 
 playerVolumeRange.value = 0.5;
 playerVolumeRange.dispatchEvent(new Event("input"));
