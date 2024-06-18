@@ -986,4 +986,5 @@ map = {
   "xc5ae3a": "彼岸の雪",
   "xcbddaf": "代替我",
   "x62f5cb": "爱河 (日文版)",
+  "xd9bd5b": "Disappear",
 }
