@@ -136,7 +136,7 @@ addEventOnElements(playlistItems, "click", function () {
  */
 const getTimecode = function (duration) {
   const minutes = Math.floor(duration / 60);
-  const seconds = Math.ceil(duration - (minutes * 60));
+  const seconds = Math.floor(duration - (minutes * 60));
   const timecode = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   return timecode;
 }
