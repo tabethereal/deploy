@@ -1012,6 +1012,7 @@ map = {
   "x64cf8d": "Cold Winter",
   "x74f2c3": "二十三",
   "x8b93cf": "Feeling the rain",
+  "x8d5450": "Fantasy Theme",
   "x8ddb76": "落樱",
   "xb5f01f": "殉道者",
   "xc5ae3a": "彼岸の雪",
