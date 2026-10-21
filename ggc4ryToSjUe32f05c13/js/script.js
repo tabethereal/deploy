@@ -111,8 +111,9 @@ const audioSource = new Audio();
 const loadMusic = function () {
   playerTitle.textContent = musicData[currentMusic].title;
   playerCollection.textContent = musicData[currentMusic].collection;
+  resetProgress();
+  playBtn.classList.remove("active");
   audioSource.src = musicData[currentMusic].musicPath;
-  audioSource.addEventListener("loadeddata", updateDuration);
 }
 
 /**
@@ -135,6 +136,7 @@ addEventOnElements(playlistItems, "click", function () {
  * 将时间值转为时间显示文本
  */
 const getTimecode = function (duration) {
+  duration = Number.isFinite(duration) ? Math.max(0, duration) : 0;
   const minutes = Math.floor(duration / 60);
   const seconds = Math.floor(duration - (minutes * 60));
   const timecode = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
@@ -147,42 +149,43 @@ const getTimecode = function (duration) {
 const playerDuration = document.querySelector("[data-duration]");
 const playerSeekRange = document.querySelector("[data-seek]");
 const updateDuration = function () {
-  playerSeekRange.max = Math.ceil(audioSource.duration);
-  playerDuration.textContent = getTimecode(Number(playerSeekRange.max));
+  const duration = Number.isFinite(audioSource.duration) ? Math.max(0, audioSource.duration) : 0;
+  playerSeekRange.max = duration;
+  playerDuration.textContent = getTimecode(duration);
+  updateRunningTime();
 }
 
 /**
  * 播放按钮：切换播放与暂停
  */
 const playBtn = document.querySelector("[data-play-btn]");
-let playTimer;
 const playMusic = function () {
-  if (audioSource.paused) {
-    audioSource.play();
-    playBtn.classList.add("active");
-    playTimer = setInterval(updateRunningTime, 500);
-  } else {
-    audioSource.pause();
-    playBtn.classList.remove("active");
-    clearInterval(playTimer);
-  }
+  audioSource.play();
 }
-playBtn.addEventListener("click", playMusic);
+const pauseMusic = function () {
+  audioSource.pause();
+}
+const togglePlayback = function () {
+  audioSource.paused ? playMusic() : pauseMusic();
+}
+playBtn.addEventListener("click", togglePlayback);
 
 /**
- * 播放时周期执行：更新进度条的数值和显示时间数值，检查是否播放结束
+ * 音频事件驱动进度更新
  */
-const playerRunningTime = document.querySelector("[data-running-time");
+const playerRunningTime = document.querySelector("[data-running-time]");
+const resetProgress = function () {
+  playerSeekRange.max = 0;
+  playerSeekRange.value = 0;
+  playerDuration.textContent = "0:00";
+  playerRunningTime.textContent = "0:00";
+  updateRangeFill.call(playerSeekRange);
+}
 const updateRunningTime = function () {
-  if (playerSeekRange.max == 0) { updateDuration(); }
-  if (audioSource.ended) {
-    playBtn.classList.remove("active");
-    audioSource.currentTime = 0;
-    skipNext();
-  }
-  playerSeekRange.value = audioSource.currentTime;
-  playerRunningTime.textContent = getTimecode(audioSource.currentTime);
-  updateRangeFill();
+  const currentTime = Number.isFinite(audioSource.currentTime) ? Math.max(0, audioSource.currentTime) : 0;
+  playerSeekRange.value = currentTime;
+  playerRunningTime.textContent = getTimecode(currentTime);
+  updateRangeFill.call(playerSeekRange);
 }
 
 /**
@@ -192,7 +195,7 @@ const ranges = document.querySelectorAll("[data-range]");
 const rangeFill = document.querySelector("[data-range-fill]");
 const updateRangeFill = function () {
   let element = Array.from(ranges).includes(this) ? this : ranges[0];
-  const rangeValue = (element.value / element.max) * 100;
+  const rangeValue = element.max > 0 ? (element.value / element.max) * 100 : 0;
   element.nextElementSibling.style.width = `${rangeValue}%`;
 }
 addEventOnElements(ranges, "input", updateRangeFill);
@@ -201,8 +204,9 @@ addEventOnElements(ranges, "input", updateRangeFill);
  * 拨动进度条时设置进度
  */
 const seek = function () {
-  audioSource.currentTime = playerSeekRange.value;
-  playerRunningTime.textContent = getTimecode(playerSeekRange.value);
+  if (!Number.isFinite(audioSource.duration) || audioSource.duration <= 0) { return; }
+  audioSource.currentTime = Math.min(audioSource.duration, Math.max(0, Number(playerSeekRange.value)));
+  updateRunningTime();
 }
 playerSeekRange.addEventListener("input", seek);
 
@@ -371,6 +375,16 @@ const refreshCollection = function () {
 /**
  * 初始化
  */
+audioSource.addEventListener("loadedmetadata", updateDuration);
+audioSource.addEventListener("durationchange", updateDuration);
+audioSource.addEventListener("timeupdate", updateRunningTime);
+audioSource.addEventListener("playing", () => playBtn.classList.add("active"));
+audioSource.addEventListener("pause", () => playBtn.classList.remove("active"));
+audioSource.addEventListener("ended", () => {
+  playBtn.classList.remove("active");
+  skipNext();
+});
+
 showCollection();
 refreshCollection();
 loadMusic();
