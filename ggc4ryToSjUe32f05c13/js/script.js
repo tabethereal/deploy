@@ -114,6 +114,12 @@ const loadMusic = function () {
   resetProgress();
   playBtn.classList.remove("active");
   audioSource.src = musicData[currentMusic].musicPath;
+  if ("mediaSession" in navigator && typeof MediaMetadata === "function") {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: musicData[currentMusic].title,
+      artist: `${musicData[currentMusic].collection} - Voxel Sphere`
+    });
+  }
 }
 
 /**
