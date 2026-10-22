@@ -400,3 +400,7 @@ playerVolumeRange.value = 0.5;
 playerVolumeRange.dispatchEvent(new Event("input"));
 changeVolume();
 
+if ("mediaSession" in navigator && typeof navigator.mediaSession.setActionHandler === "function") {
+  navigator.mediaSession.setActionHandler("previoustrack", skipPrev);
+  navigator.mediaSession.setActionHandler("nexttrack", skipNext);
+}
